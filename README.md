@@ -302,30 +302,6 @@ EXPOSE 8000
 CMD ["gunicorn", "url_shortener.wsgi:application", "--bind", "0.0.0.0:8000"]
 ```
 
-### Heroku Deployment
-
-1. Create `Procfile`:
-
-```
-web: gunicorn url_shortener.wsgi:application --log-file -
-```
-
-2. Add to `requirements.txt`:
-
-```
-gunicorn==21.2.0
-dj-database-url==2.1.0
-whitenoise==6.5.0
-```
-
-3. Deploy:
-
-```bash
-heroku create your-app-name
-git push heroku main
-heroku run python manage.py migrate
-```
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -345,18 +321,11 @@ heroku run python manage.py migrate
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- Django community for the excellent framework
-- Chart.js for beautiful analytics charts
-- Font Awesome for the icon set
-- All contributors and users of this project
-
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/your-username/URL-Shortener-Pro/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-username/URL-Shortener-Pro/discussions)
-- **Email**: your-email@example.com
+- **Email**: satheesanamal6@gmail.com
 
 ## 🔮 Roadmap
 
@@ -366,7 +335,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Integration with popular services (Slack, Discord, etc.)
 - [ ] Mobile app development
 - [ ] Enterprise features and white-labeling
-
----
-
-**Made with ❤️ for the modern web**
