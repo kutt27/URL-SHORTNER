@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation | URL Shortener Pro</title>
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Modern fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    
+    <!-- Custom styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>"
+    />
+    
+    <style>
+      .docs-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      .docs-header {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-medium);
+        border: 1px solid var(--border-color);
+        text-align: center;
+      }
+      
+      .endpoint-section {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--border-color);
+      }
+      
+      .endpoint-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .method-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      
+      .method-get { background: #10b981; color: white; }
+      .method-post { background: #3b82f6; color: white; }
+      .method-put { background: #f59e0b; color: white; }
+      .method-delete { background: #ef4444; color: white; }
+      
+      .endpoint-url {
+        font-family: 'Fira Code', monospace;
+        background: var(--bg-secondary);
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        border: 1px solid var(--border-color);
+      }
+      
+      .code-block {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+      
+      .parameter-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+      }
+      
+      .parameter-table th,
+      .parameter-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .parameter-table th {
+        background: var(--bg-secondary);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      
+      .parameter-table td {
+        color: var(--text-secondary);
+      }
+      
+      .required {
+        color: var(--error-color);
+        font-weight: 600;
+      }
+      
+      .optional {
+        color: var(--text-secondary);
+      }
+      
+      @media (max-width: 768px) {
+        .docs-container {
+          padding: 1rem;
+        }
+        
+        .docs-header {
+          padding: 1.5rem;
+        }
+        
+        .endpoint-section {
+          padding: 1.5rem;
+        }
+        
+        .parameter-table {
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+      🌙
+    </button>
+
+    <div class="docs-container">
+      <!-- Header -->
+      <div class="docs-header">
+        <h1 style="margin-bottom: 0.5rem; color: var(--text-primary);">
+          <i class="fas fa-code"></i> API Documentation
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem;">
+          REST API for URL Shortener Pro - Programmatic access to URL shortening and analytics
+        </p>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="{% url 'home' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Home
+          </a>
+          <a href="/api/" class="btn btn-primary" target="_blank">
+            <i class="fas fa-play"></i> Try API
+          </a>
+        </div>
+      </div>
+
+      <!-- Base URL -->
+      <div class="endpoint-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Base URL</h2>
+        <div class="endpoint-url">
+          <strong>{{ request.build_absolute_uri }}/api/</strong>
+        </div>
+        <p style="color: var(--text-secondary);">
+          All API endpoints are relative to this base URL. Authentication is optional but recommended for higher rate limits.
+        </p>
+      </div>
+
+      <!-- Rate Limits -->
+      <div class="endpoint-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Rate Limits</h2>
+        <ul style="color: var(--text-secondary); line-height: 1.6;">
+          <li><strong>Anonymous users:</strong> 100 requests per hour</li>
+          <li><strong>Authenticated users:</strong> 1000 requests per hour</li>
+        </ul>
+        <p style="color: var(--text-secondary); margin-top: 1rem;">
+          Rate limit headers are included in all responses: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, <code>X-RateLimit-Reset</code>
+        </p>
+      </div>
+
+      <!-- Create Short URL -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-post">POST</span>
+          Create Short URL
+        </div>
+        <div class="endpoint-url">/api/urls/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Create a new shortened URL with optional custom alias.
+        </p>
+        
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Request Body:</h4>
+        <div class="code-block">{
+  "original_url": "https://example.com/very/long/url",
+  "custom_alias": "my-link"  // optional
+}</div>
+
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Response:</h4>
+        <div class="code-block">{
+  "id": 1,
+  "original_url": "https://example.com/very/long/url",
+  "short_code": "abc123",
+  "custom_alias": "my-link",
+  "short_url": "https://yourdomain.com/my-link",
+  "click_count": 0,
+  "title": "Example Page",
+  "description": "An example page",
+  "domain": "example.com",
+  "is_active": true,
+  "created_at": "2025-08-15T08:30:00Z",
+  "updated_at": "2025-08-15T08:30:00Z"
+}</div>
+      </div>
+
+      <!-- List URLs -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          List URLs
+        </div>
+        <div class="endpoint-url">/api/urls/list/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Get a paginated list of shortened URLs with optional filtering.
+        </p>
+        
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Query Parameters:</h4>
+        <table class="parameter-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>page</code></td>
+              <td>integer</td>
+              <td class="optional">Optional</td>
+              <td>Page number for pagination</td>
+            </tr>
+            <tr>
+              <td><code>domain</code></td>
+              <td>string</td>
+              <td class="optional">Optional</td>
+              <td>Filter by domain</td>
+            </tr>
+            <tr>
+              <td><code>days</code></td>
+              <td>integer</td>
+              <td class="optional">Optional</td>
+              <td>Filter URLs created in last N days</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- URL Details -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          URL Details
+        </div>
+        <div class="endpoint-url">/api/urls/{short_code}/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Get details for a specific shortened URL by short code or custom alias.
+        </p>
+      </div>
+
+      <!-- URL Analytics -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          URL Analytics
+        </div>
+        <div class="endpoint-url">/api/analytics/{short_code}/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Get detailed analytics for a specific URL including click statistics and charts data.
+        </p>
+        
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Response includes:</h4>
+        <ul style="color: var(--text-secondary); line-height: 1.6;">
+          <li>URL information and metadata</li>
+          <li>Click counts (total, today, this week, this month)</li>
+          <li>Recent click details</li>
+          <li>Analytics data for charts (daily clicks, device types, browsers, countries)</li>
+        </ul>
+      </div>
+
+      <!-- Bulk Shortening -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-post">POST</span>
+          Bulk URL Shortening
+        </div>
+        <div class="endpoint-url">/api/urls/bulk/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Shorten multiple URLs at once (maximum 50 URLs per request).
+        </p>
+        
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Request Body:</h4>
+        <div class="code-block">{
+  "urls": [
+    "https://example.com/page1",
+    "https://example.com/page2",
+    "https://example.com/page3"
+  ]
+}</div>
+
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">Response:</h4>
+        <div class="code-block">{
+  "results": [
+    {
+      "original_url": "https://example.com/page1",
+      "short_url": "https://yourdomain.com/abc123",
+      "short_code": "abc123",
+      "status": "success"
+    },
+    {
+      "original_url": "invalid-url",
+      "short_url": "",
+      "short_code": "",
+      "status": "error",
+      "error": "Invalid URL format"
+    }
+  ]
+}</div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="endpoint-section">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          Overall Statistics
+        </div>
+        <div class="endpoint-url">/api/stats/</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Get overall statistics including total URLs, clicks, top domains, and recent activity.
+        </p>
+      </div>
+
+      <!-- Error Responses -->
+      <div class="endpoint-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Error Responses</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          All errors follow a consistent format:
+        </p>
+        
+        <div class="code-block">{
+  "error": "Error message",
+  "details": {
+    "field_name": ["Specific field error"]
+  }
+}</div>
+
+        <h4 style="color: var(--text-primary); margin: 1rem 0 0.5rem 0;">HTTP Status Codes:</h4>
+        <ul style="color: var(--text-secondary); line-height: 1.6;">
+          <li><strong>200 OK:</strong> Request successful</li>
+          <li><strong>201 Created:</strong> Resource created successfully</li>
+          <li><strong>400 Bad Request:</strong> Invalid request data</li>
+          <li><strong>404 Not Found:</strong> Resource not found</li>
+          <li><strong>429 Too Many Requests:</strong> Rate limit exceeded</li>
+          <li><strong>500 Internal Server Error:</strong> Server error</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div>
+        © {% now "Y" %} URL Shortener Pro | Built with ❤️ for the modern web
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bulk URL Shortener | URL Shortener Pro</title>
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Modern fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    
+    <!-- Custom styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>"
+    />
+    
+    <style>
+      .bulk-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      .bulk-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-medium);
+        border: 1px solid var(--border-color);
+      }
+      
+      .bulk-textarea {
+        width: 100%;
+        min-height: 200px;
+        padding: 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+      
+      .bulk-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      
+      .results-container {
+        margin-top: 2rem;
+        display: none;
+      }
+      
+      .result-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .result-success {
+        border-color: var(--success-color);
+        background: rgba(74, 222, 128, 0.1);
+      }
+      
+      .result-error {
+        border-color: var(--error-color);
+        background: rgba(248, 113, 113, 0.1);
+      }
+      
+      .result-info {
+        flex: 1;
+        min-width: 300px;
+      }
+      
+      .result-original {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+        word-break: break-all;
+      }
+      
+      .result-shortened {
+        font-family: 'Fira Code', monospace;
+        font-weight: 600;
+        color: var(--success-color);
+      }
+      
+      .result-error-msg {
+        color: var(--error-color);
+        font-size: 0.85rem;
+      }
+      
+      .result-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+      }
+      
+      .loading.show {
+        display: block;
+      }
+      
+      .export-buttons {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      @media (max-width: 768px) {
+        .bulk-container {
+          padding: 1rem;
+        }
+        
+        .bulk-card {
+          padding: 1.5rem;
+        }
+        
+        .result-item {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .result-actions {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+      🌙
+    </button>
+
+    <div class="bulk-container">
+      <div class="bulk-card">
+        <!-- Header -->
+        <div class="header" style="margin-bottom: 2rem;">
+          <h1><i class="fas fa-list"></i> Bulk URL Shortener</h1>
+          <p>Shorten multiple URLs at once - enter one URL per line</p>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center;">
+          <a href="{% url 'home' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Home
+          </a>
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+        </div>
+
+        <!-- Bulk Form -->
+        <form id="bulk-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="urls-textarea" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">
+              URLs to Shorten:
+            </label>
+            <textarea
+              id="urls-textarea"
+              name="urls"
+              class="bulk-textarea"
+              placeholder="Enter URLs here, one per line:
+
+https://www.example.com/very/long/url/path
+https://another-example.com/page
+https://third-example.org/article"
+              required
+            ></textarea>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+              <i class="fas fa-info-circle"></i>
+              Enter one URL per line. Maximum 50 URLs at once.
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <i class="fas fa-magic"></i>
+            Shorten All URLs
+          </button>
+        </form>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+          <div class="loading-spinner" style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-radius: 50%; border-top-color: var(--primary-color); animation: spin 1s ease-in-out infinite; margin-bottom: 1rem;"></div>
+          <div>Processing URLs...</div>
+        </div>
+
+        <!-- Results -->
+        <div id="results-container" class="results-container">
+          <h3 style="margin-bottom: 1rem; color: var(--text-primary);">
+            <i class="fas fa-check-circle"></i> Results
+          </h3>
+          <div id="results-list"></div>
+          
+          <div class="export-buttons">
+            <button id="copy-all-btn" class="btn btn-secondary">
+              <i class="fas fa-copy"></i> Copy All Short URLs
+            </button>
+            <button id="download-csv-btn" class="btn btn-secondary">
+              <i class="fas fa-download"></i> Download CSV
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div>
+        © {% now "Y" %} URL Shortener Pro | Built with ❤️ for the modern web
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <script>
+      let bulkResults = [];
+
+      document.getElementById('bulk-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const textarea = document.getElementById('urls-textarea');
+        const urls = textarea.value.trim();
+        
+        if (!urls) {
+          alert('Please enter at least one URL');
+          return;
+        }
+        
+        const urlList = urls.split('\n').filter(url => url.trim());
+        
+        if (urlList.length > 50) {
+          alert('Maximum 50 URLs allowed at once');
+          return;
+        }
+        
+        // Show loading
+        document.getElementById('loading').classList.add('show');
+        document.getElementById('results-container').style.display = 'none';
+        
+        try {
+          const formData = new FormData();
+          formData.append('urls', urls);
+          formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+          
+          const response = await fetch('{% url "bulk" %}', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const data = await response.json();
+          bulkResults = data.results;
+          
+          displayResults(bulkResults);
+          
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while processing URLs');
+        } finally {
+          document.getElementById('loading').classList.remove('show');
+        }
+      });
+
+      function displayResults(results) {
+        const resultsContainer = document.getElementById('results-container');
+        const resultsList = document.getElementById('results-list');
+        
+        resultsList.innerHTML = '';
+        
+        results.forEach((result, index) => {
+          const resultItem = document.createElement('div');
+          resultItem.className = `result-item ${result.status === 'success' ? 'result-success' : 'result-error'}`;
+          
+          if (result.status === 'success') {
+            resultItem.innerHTML = `
+              <div class="result-info">
+                <div class="result-original">${result.original}</div>
+                <div class="result-shortened">${result.shortened}</div>
+              </div>
+              <div class="result-actions">
+                <button onclick="copyToClipboard('${result.shortened}')" class="action-btn action-btn-secondary">
+                  <i class="fas fa-copy"></i>
+                </button>
+                <a href="${result.shortened}" target="_blank" class="action-btn action-btn-primary">
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+            `;
+          } else {
+            resultItem.innerHTML = `
+              <div class="result-info">
+                <div class="result-original">${result.original}</div>
+                <div class="result-error-msg">${result.error}</div>
+              </div>
+            `;
+          }
+          
+          resultsList.appendChild(resultItem);
+        });
+        
+        resultsContainer.style.display = 'block';
+      }
+
+      // Copy all successful URLs
+      document.getElementById('copy-all-btn').addEventListener('click', async function() {
+        const successfulUrls = bulkResults
+          .filter(result => result.status === 'success')
+          .map(result => result.shortened)
+          .join('\n');
+        
+        if (successfulUrls) {
+          try {
+            await navigator.clipboard.writeText(successfulUrls);
+            this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            this.style.background = 'var(--success-color)';
+            setTimeout(() => {
+              this.innerHTML = '<i class="fas fa-copy"></i> Copy All Short URLs';
+              this.style.background = '';
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy: ', err);
+          }
+        }
+      });
+
+      // Download CSV
+      document.getElementById('download-csv-btn').addEventListener('click', function() {
+        const csvContent = 'Original URL,Shortened URL,Status,Error\n' +
+          bulkResults.map(result => 
+            `"${result.original}","${result.shortened || ''}","${result.status}","${result.error || ''}"`
+          ).join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'bulk-shortened-urls.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      });
+
+      // Copy individual URL
+      async function copyToClipboard(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          const btn = event.target.closest('button');
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-check"></i>';
+          btn.style.background = 'var(--success-color)';
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.style.background = '';
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy: ', err);
+        }
+      }
+
+      // Add spin animation for loading
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

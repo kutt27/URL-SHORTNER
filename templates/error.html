@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ error_title|default:"Error" }} - URL Shortener Pro</title>
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Modern fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    
+    <!-- Custom styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>"
+    />
+  </head>
+  
+  <body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+      🌙
+    </button>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <div class="url-card">
+        <!-- Error Header -->
+        <div class="header" style="text-align: center;">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">
+            {% if "Not Found" in error_title %}
+              🔍
+            {% elif "Expired" in error_title %}
+              ⏰
+            {% elif "Unsafe" in error_title %}
+              🛡️
+            {% else %}
+              ⚠️
+            {% endif %}
+          </div>
+          <h1 style="color: var(--error-color);">{{ error_title|default:"Oops! Something went wrong" }}</h1>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+            {{ error_message|default:"We encountered an unexpected error. Please try again." }}
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="{% url 'home' %}" class="btn btn-primary">
+            <i class="fas fa-home"></i>
+            Go Home
+          </a>
+          
+          <button onclick="history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Go Back
+          </button>
+        </div>
+
+        <!-- Additional Help -->
+        <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
+          <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Need Help?</h3>
+          <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+            <div>
+              <i class="fas fa-question-circle"></i>
+              <a href="{% url 'home' %}" style="color: var(--primary-color); text-decoration: none; margin-left: 0.5rem;">Create New Link</a>
+            </div>
+            <div>
+              <i class="fas fa-shield-alt"></i>
+              <span style="margin-left: 0.5rem;">Safe & Secure</span>
+            </div>
+            <div>
+              <i class="fas fa-clock"></i>
+              <span style="margin-left: 0.5rem;">24/7 Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div>
+        © {% now "Y" %} URL Shortener Pro | Built with ❤️ for the modern web
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

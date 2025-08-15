@@ -1,0 +1,68 @@
+INFO 2025-08-15 08:45:22,001 autoreload 432624 140128065980224 Watching for file changes with StatReloader
+INFO 2025-08-15 08:45:39,020 autoreload 432624 140128065980224 /home/kutt/Downloads/temp/URL-Shortener/url_shortener/views.py changed, reloading.
+INFO 2025-08-15 08:45:39,648 autoreload 433249 140610944735040 Watching for file changes with StatReloader
+ERROR 2025-08-15 08:54:57,629 log 449590 139854823262016 Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endfor'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+               ^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/response.py", line 90, in rendered_content
+    template = self.resolve_template(self.template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/response.py", line 72, in resolve_template
+    return select_template(template, using=self.using)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/loader.py", line 42, in select_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/home/kutt/Downloads/Installation/miniconda/envs/url-shortner/lib/python3.11/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 111: 'endfor'. Did you forget to register or load this tag?
+INFO 2025-08-15 08:59:43,865 autoreload 458700 140241108027200 Watching for file changes with StatReloader
+INFO 2025-08-15 08:59:48,531 basehttp 458700 140241052186304 "GET / HTTP/1.1" 200 8968
+INFO 2025-08-15 08:59:48,617 basehttp 458700 140241052186304 "GET /static/css/style.css HTTP/1.1" 304 0
+INFO 2025-08-15 08:59:48,635 basehttp 458700 140241043793600 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2025-08-15 08:59:56,377 basehttp 458700 140241043793600 "GET /dashboard/ HTTP/1.1" 200 8594
+INFO 2025-08-15 09:00:01,321 basehttp 458700 140241043793600 "GET /bulk/ HTTP/1.1" 200 12918
+INFO 2025-08-15 09:00:12,705 basehttp 458700 140241043793600 "GET / HTTP/1.1" 200 8968
+INFO 2025-08-15 09:00:21,404 views 458700 140241043793600 Created short URL 5iASLr for http://example.com/link/to/document
+INFO 2025-08-15 09:00:21,413 basehttp 458700 140241043793600 "POST / HTTP/1.1" 302 0
+INFO 2025-08-15 09:00:21,425 basehttp 458700 140241043793600 "GET /?link=http://example.com/5iASLr HTTP/1.1" 200 9009
+INFO 2025-08-15 09:00:28,044 basehttp 458700 140241043793600 "GET /qr/5iASLr/ HTTP/1.1" 302 0
